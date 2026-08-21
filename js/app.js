@@ -108,15 +108,19 @@ function buildConfirmItems(codes) {
                 skippedMessages.push('「' + book.title + '」は既に貸出中のため除外しました');
                 return;
             }
+            const loanDueDate = addDaysToToday(LOAN_PERIOD_DAYS);
+            const reservationDueDate = getReservationDueDate(book.code, reservedCodes, reservationHistory);
+            // 予約期限日が今回の貸出期間（貸出日〜返却期限日）と重複する場合のみ警告対象とする
+            const hasReservationConflict = reservationDueDate !== null && reservationDueDate <= loanDueDate;
             items.push({
                 code: book.code,
                 title: book.title,
                 author: book.author,
                 genre: book.genre,
                 loanDate: getTodayString(),
-                dueDate: addDaysToToday(LOAN_PERIOD_DAYS),
-                hasReservation: isReservedNow(book.code, reservedCodes, reservationHistory),
-                reservationDueDate: getReservationDueDate(book.code, reservedCodes, reservationHistory)
+                dueDate: loanDueDate,
+                hasReservation: hasReservationConflict,
+                reservationDueDate: reservationDueDate
             });
         } else {
             if (!activeLoan) {
