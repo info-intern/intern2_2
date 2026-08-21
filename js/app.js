@@ -850,10 +850,7 @@ async function init() {
     });
     document.getElementById('home-reserve-btn').addEventListener('click', startReserve);
     document.getElementById('scan-start-btn').addEventListener('click', beginScan);
-    document.getElementById('scan-cancel-btn').addEventListener('click', goHome);
     document.getElementById('confirm-submit-btn').addEventListener('click', handleConfirmSubmit);
-    document.getElementById('confirm-cancel-btn').addEventListener('click', goHome);
-    document.getElementById('complete-home-btn').addEventListener('click', goHome);
     document.getElementById('home-books-btn').addEventListener('click', function () {
         renderBooksGenreScreen();
         showScreen('screen-books-genre');
@@ -866,19 +863,8 @@ async function init() {
         renderReservationsScreen();
         showScreen('screen-reservations');
     });
-    document.getElementById('books-genre-back-btn').addEventListener('click', goHome);
-    document.getElementById('books-back-btn').addEventListener('click', function () {
-        currentBookGenre = null;
-        renderBooksGenreScreen();
-        showScreen('screen-books-genre');
-    });
-    document.getElementById('loans-back-btn').addEventListener('click', goHome);
-    document.getElementById('reservations-back-btn').addEventListener('click', goHome);
     document.getElementById('reserve-select-next-btn').addEventListener('click', handleReserveSelectNext);
-    document.getElementById('reserve-select-cancel-btn').addEventListener('click', goHome);
     document.getElementById('reserve-date-submit-btn').addEventListener('click', handleReserveDateSubmit);
-    document.getElementById('reserve-date-cancel-btn').addEventListener('click', goHome);
-    document.getElementById('reserve-complete-home-btn').addEventListener('click', goHome);
     document.getElementById('global-back-btn').addEventListener('click', handleGlobalBack);
 
     showScreen('screen-home');
