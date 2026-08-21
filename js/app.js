@@ -284,6 +284,138 @@ function renderCompleteScreen() {
 }
 
 /**
+ * 蔵書一覧画面のタイトルと一覧を描画する
+ */
+function renderBooksScreen() {
+    const title = document.getElementById('books-title');
+    title.textContent = '蔵書一覧 (' + allBooks.length + '冊)';
+
+    const list = document.getElementById('books-list');
+    list.textContent = '';
+    allBooks.forEach(function (book) {
+        list.appendChild(createBookInfoRow(book));
+    });
+}
+
+/**
+ * 蔵書一覧画面の1行分(アコーディオン)のDOM要素を作成する
+ */
+function createBookInfoRow(book) {
+    const activeLoan = findActiveLoan(book.code, loanHistory);
+
+    const details = document.createElement('details');
+    details.className = 'book-item';
+
+    const summary = document.createElement('summary');
+
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'book-title';
+    titleSpan.textContent = book.title;
+    summary.appendChild(titleSpan);
+
+    if (activeLoan) {
+        const badge = document.createElement('span');
+        badge.className = 'status-badge';
+        badge.textContent = '貸出中';
+        summary.appendChild(badge);
+    }
+
+    const chevron = document.createElement('span');
+    chevron.className = 'chevron';
+    chevron.textContent = '﹀';
+    summary.appendChild(chevron);
+
+    details.appendChild(summary);
+
+    const detail = document.createElement('div');
+    detail.className = 'book-detail';
+    detail.appendChild(createDetailRow('著者', book.author, false));
+    detail.appendChild(createDetailRow('ジャンル', book.genre, false));
+    detail.appendChild(createDetailRow('所蔵冊数', book.count + '冊', false));
+    detail.appendChild(createDetailRow('貸出状況', activeLoan ? '貸出中' : '貸出可能', false));
+    details.appendChild(detail);
+
+    return details;
+}
+
+/**
+ * 貸出中一覧画面のタイトルと一覧を描画する
+ */
+function renderLoansScreen() {
+    const activeLoans = loanHistory.filter(function (record) {
+        return record.status === LOAN_STATUS_ACTIVE;
+    });
+
+    const title = document.getElementById('loans-title');
+    title.textContent = '貸出中一覧 (' + activeLoans.length + '冊)';
+
+    const list = document.getElementById('loans-list');
+    const emptyMessage = document.getElementById('loans-empty');
+    list.textContent = '';
+
+    if (activeLoans.length === 0) {
+        list.hidden = true;
+        emptyMessage.hidden = false;
+        return;
+    }
+
+    list.hidden = false;
+    emptyMessage.hidden = true;
+    activeLoans.forEach(function (loan) {
+        const book = findBookByCode(loan.code, allBooks);
+        list.appendChild(createLoanInfoRow(loan, book));
+    });
+}
+
+/**
+ * 貸出中一覧画面の1行分(アコーディオン)のDOM要素を作成する
+ */
+function createLoanInfoRow(loan, book) {
+    const title = book ? book.title : '未登録の本 (コード: ' + loan.code + ')';
+
+    const details = document.createElement('details');
+    details.className = 'book-item';
+
+    const summary = document.createElement('summary');
+
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'book-title';
+    titleSpan.textContent = title;
+    summary.appendChild(titleSpan);
+
+    if (loan.hasReservation) {
+        const badge = document.createElement('span');
+        badge.className = 'reserved-badge';
+        badge.textContent = '⚠ 予約あり';
+        summary.appendChild(badge);
+    }
+
+    const chevron = document.createElement('span');
+    chevron.className = 'chevron';
+    chevron.textContent = '﹀';
+    summary.appendChild(chevron);
+
+    details.appendChild(summary);
+
+    const detail = document.createElement('div');
+    detail.className = 'book-detail';
+    if (book) {
+        detail.appendChild(createDetailRow('著者', book.author, false));
+        detail.appendChild(createDetailRow('ジャンル', book.genre, false));
+    }
+    detail.appendChild(createDetailRow('貸出日', loan.loanDate, false));
+    detail.appendChild(createDetailRow('返却期限', loan.dueDate, false));
+    detail.appendChild(createDetailRow(
+        '予約',
+        loan.hasReservation ? 'あり（他利用者）' : 'なし',
+        loan.hasReservation
+    ));
+    details.appendChild(detail);
+
+    return details;
+}
+
+/**
  * 起動時の初期化処理。データの読み込みとイベント登録を行う
  */
 async function init() {
@@ -307,6 +439,16 @@ async function init() {
     document.getElementById('confirm-submit-btn').addEventListener('click', handleConfirmSubmit);
     document.getElementById('confirm-cancel-btn').addEventListener('click', goHome);
     document.getElementById('complete-home-btn').addEventListener('click', goHome);
+    document.getElementById('home-books-btn').addEventListener('click', function () {
+        renderBooksScreen();
+        showScreen('screen-books');
+    });
+    document.getElementById('home-loans-btn').addEventListener('click', function () {
+        renderLoansScreen();
+        showScreen('screen-loans');
+    });
+    document.getElementById('books-back-btn').addEventListener('click', goHome);
+    document.getElementById('loans-back-btn').addEventListener('click', goHome);
 
     showScreen('screen-home');
 }

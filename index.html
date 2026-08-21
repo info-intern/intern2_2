@@ -22,6 +22,10 @@
                     <button id="home-lend-btn" type="button" class="primary-btn mode-btn">貸出</button>
                     <button id="home-return-btn" type="button" class="primary-btn mode-btn mode-btn-return">返却</button>
                 </div>
+                <div class="home-secondary-buttons">
+                    <button id="home-books-btn" type="button" class="list-btn">蔵書一覧を見る</button>
+                    <button id="home-loans-btn" type="button" class="list-btn">貸出中の本を見る</button>
+                </div>
             </section>
 
             <!-- スキャン画面 -->
@@ -53,6 +57,25 @@
                 <ul id="complete-list" class="book-list book-list-plain"></ul>
                 <div id="complete-notice" class="notice-box" hidden></div>
                 <button id="complete-home-btn" type="button" class="primary-btn">ホームに戻る</button>
+            </section>
+
+            <!-- 蔵書一覧画面 -->
+            <section id="screen-books" class="screen" hidden>
+                <div class="confirm-header">
+                    <h2 id="books-title"></h2>
+                </div>
+                <ul id="books-list" class="book-list"></ul>
+                <button id="books-back-btn" type="button" class="secondary-btn">ホームに戻る</button>
+            </section>
+
+            <!-- 貸出中一覧画面 -->
+            <section id="screen-loans" class="screen" hidden>
+                <div class="confirm-header">
+                    <h2 id="loans-title"></h2>
+                </div>
+                <ul id="loans-list" class="book-list"></ul>
+                <p id="loans-empty" class="sub-text" hidden>現在貸出中の本はありません。</p>
+                <button id="loans-back-btn" type="button" class="secondary-btn">ホームに戻る</button>
             </section>
         </main>
     </div>
