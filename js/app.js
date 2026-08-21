@@ -220,6 +220,16 @@ function createDetailRow(label, value, isReservedRow) {
  * 確認画面の確定ボタン押下時、貸出/返却を確定し履歴を更新する
  */
 function handleConfirmSubmit() {
+    if (currentMode === '貸出') {
+        const hasReservedItem = confirmItems.some(function (item) { return item.hasReservation; });
+        if (hasReservedItem) {
+            const confirmed = window.confirm('予約ありの本が含まれています。貸出を続けますか？');
+            if (!confirmed) {
+                return;
+            }
+        }
+    }
+
     const today = getTodayString();
 
     confirmItems.forEach(function (item) {
