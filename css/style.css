@@ -258,6 +258,21 @@ button {
     font-weight: 600;
 }
 
+/* 予約中一覧画面 */
+.cancel-reserve-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    background-color: transparent;
+    color: var(--warning-color);
+    font-weight: 600;
+    border: 1px solid var(--warning-color);
+}
+
+.cancel-reserve-btn:active {
+    background-color: #fdf1e9;
+}
+
 /* 予約: 本の選択画面 */
 .reserve-select-row {
     display: flex;

@@ -26,6 +26,7 @@
                 <div class="home-secondary-buttons">
                     <button id="home-books-btn" type="button" class="list-btn">蔵書一覧を見る</button>
                     <button id="home-loans-btn" type="button" class="list-btn">貸出中の本を見る</button>
+                    <button id="home-reservations-btn" type="button" class="list-btn">予約中の本を見る</button>
                 </div>
             </section>
 
@@ -77,6 +78,16 @@
                 <ul id="loans-list" class="book-list"></ul>
                 <p id="loans-empty" class="sub-text" hidden>現在貸出中の本はありません。</p>
                 <button id="loans-back-btn" type="button" class="secondary-btn">ホームに戻る</button>
+            </section>
+
+            <!-- 予約中一覧画面 -->
+            <section id="screen-reservations" class="screen" hidden>
+                <div class="confirm-header">
+                    <h2 id="reservations-title"></h2>
+                </div>
+                <ul id="reservations-list" class="book-list"></ul>
+                <p id="reservations-empty" class="sub-text" hidden>現在予約中の本はありません。</p>
+                <button id="reservations-back-btn" type="button" class="secondary-btn">ホームに戻る</button>
             </section>
 
             <!-- 予約: 本の選択画面 -->

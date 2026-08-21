@@ -8,6 +8,8 @@ const LOAN_STATUS_ACTIVE = '貸出中';
 const LOAN_STATUS_RETURNED = '返却済み';
 const RESERVATION_HISTORY_KEY = 'reservationHistory';
 const RESERVATION_STATUS_ACTIVE = '予約中';
+const RESERVATION_STATUS_CANCELLED = '取消済み';
+const CANCELLED_RESERVATION_CODES_KEY = 'cancelledReservationCodes';
 
 /**
  * 蔵書データ(books.json)を取得する
@@ -73,6 +75,28 @@ function getReservationHistory() {
  */
 function saveReservationHistory(history) {
     localStorage.setItem(RESERVATION_HISTORY_KEY, JSON.stringify(history));
+}
+
+/**
+ * LocalStorageから、取り消し済みの初期データ予約のコード一覧を取得する
+ */
+function getCancelledReservationCodes() {
+    const raw = localStorage.getItem(CANCELLED_RESERVATION_CODES_KEY);
+    if (!raw) {
+        return [];
+    }
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        return [];
+    }
+}
+
+/**
+ * 取り消し済みの初期データ予約のコード一覧をLocalStorageへ保存する
+ */
+function saveCancelledReservationCodes(codes) {
+    localStorage.setItem(CANCELLED_RESERVATION_CODES_KEY, JSON.stringify(codes));
 }
 
 /**
