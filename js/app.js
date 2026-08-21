@@ -9,6 +9,7 @@ let currentMode = null; // '貸出' または '返却'
 let confirmItems = [];  // 確認画面に表示する本のリスト
 let reserveSelectedCodes = []; // 予約フローで選択中の本のコード一覧
 let reserveItems = [];         // 予約を確定する本のリスト（タイトル込み）
+let currentBookGenre = null;   // 蔵書一覧で選択中のジャンル
 
 /**
  * 画面ID(screen-xxx)を1つだけ表示し、他は隠す
@@ -28,6 +29,7 @@ function goHome() {
     confirmItems = [];
     reserveSelectedCodes = [];
     reserveItems = [];
+    currentBookGenre = null;
     showScreen('screen-home');
 }
 
@@ -310,15 +312,77 @@ function renderCompleteScreen() {
 }
 
 /**
- * 蔵書一覧画面のタイトルと一覧を描画する
+ * 蔵書一覧: ジャンル選択画面のタイトルと一覧を描画する
+ */
+function renderBooksGenreScreen() {
+    const genres = getGenreList(allBooks);
+
+    const title = document.getElementById('books-genre-title');
+    title.textContent = '蔵書一覧：ジャンルを選択 (' + genres.length + '件)';
+
+    const list = document.getElementById('books-genre-list');
+    list.textContent = '';
+    genres.forEach(function (genreInfo) {
+        list.appendChild(createGenreRow(genreInfo));
+    });
+}
+
+/**
+ * ジャンル選択画面の1行分のDOM要素を作成する
+ */
+function createGenreRow(genreInfo) {
+    const li = document.createElement('li');
+    li.className = 'book-item';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'genre-row';
+    button.addEventListener('click', function () {
+        showBooksForGenre(genreInfo.name);
+    });
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'book-title';
+    nameSpan.textContent = genreInfo.name;
+    button.appendChild(nameSpan);
+
+    const countSpan = document.createElement('span');
+    countSpan.className = 'status-badge';
+    countSpan.textContent = genreInfo.count + '冊';
+    button.appendChild(countSpan);
+
+    const arrow = document.createElement('span');
+    arrow.className = 'chevron genre-arrow';
+    arrow.textContent = '›';
+    button.appendChild(arrow);
+
+    li.appendChild(button);
+    return li;
+}
+
+/**
+ * ジャンルを選択して、そのジャンルの蔵書詳細一覧画面へ遷移する
+ */
+function showBooksForGenre(genreName) {
+    currentBookGenre = genreName;
+    renderBooksScreen();
+    showScreen('screen-books');
+}
+
+/**
+ * 蔵書一覧: 本の詳細画面のタイトルと一覧（選択中ジャンルの本のみ）を描画する
  */
 function renderBooksScreen() {
+    const books = allBooks.filter(function (book) {
+        return book.genre === currentBookGenre;
+    });
+
     const title = document.getElementById('books-title');
-    title.textContent = '蔵書一覧 (' + allBooks.length + '冊)';
+    title.textContent = currentBookGenre + ' (' + books.length + '冊)';
 
     const list = document.getElementById('books-list');
     list.textContent = '';
-    allBooks.forEach(function (book) {
+    books.forEach(function (book) {
         list.appendChild(createBookInfoRow(book));
     });
 }
@@ -763,8 +827,8 @@ async function init() {
     document.getElementById('confirm-cancel-btn').addEventListener('click', goHome);
     document.getElementById('complete-home-btn').addEventListener('click', goHome);
     document.getElementById('home-books-btn').addEventListener('click', function () {
-        renderBooksScreen();
-        showScreen('screen-books');
+        renderBooksGenreScreen();
+        showScreen('screen-books-genre');
     });
     document.getElementById('home-loans-btn').addEventListener('click', function () {
         renderLoansScreen();
@@ -774,7 +838,12 @@ async function init() {
         renderReservationsScreen();
         showScreen('screen-reservations');
     });
-    document.getElementById('books-back-btn').addEventListener('click', goHome);
+    document.getElementById('books-genre-back-btn').addEventListener('click', goHome);
+    document.getElementById('books-back-btn').addEventListener('click', function () {
+        currentBookGenre = null;
+        renderBooksGenreScreen();
+        showScreen('screen-books-genre');
+    });
     document.getElementById('loans-back-btn').addEventListener('click', goHome);
     document.getElementById('reservations-back-btn').addEventListener('click', goHome);
     document.getElementById('reserve-select-next-btn').addEventListener('click', handleReserveSelectNext);

@@ -258,6 +258,27 @@ button {
     font-weight: 600;
 }
 
+/* 蔵書一覧: ジャンル選択画面 */
+.genre-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    background: none;
+    color: var(--text-color);
+    text-align: left;
+}
+
+.genre-row:active {
+    background-color: var(--bg-color);
+}
+
+.genre-arrow {
+    transform: none;
+}
+
 /* 予約中一覧画面 */
 .cancel-reserve-btn {
     width: 100%;

@@ -61,13 +61,22 @@
                 <button id="complete-home-btn" type="button" class="primary-btn">ホームに戻る</button>
             </section>
 
-            <!-- 蔵書一覧画面 -->
+            <!-- 蔵書一覧: ジャンル選択画面 -->
+            <section id="screen-books-genre" class="screen" hidden>
+                <div class="confirm-header">
+                    <h2 id="books-genre-title"></h2>
+                </div>
+                <ul id="books-genre-list" class="book-list"></ul>
+                <button id="books-genre-back-btn" type="button" class="secondary-btn">ホームに戻る</button>
+            </section>
+
+            <!-- 蔵書一覧: 本の詳細画面 -->
             <section id="screen-books" class="screen" hidden>
                 <div class="confirm-header">
                     <h2 id="books-title"></h2>
                 </div>
                 <ul id="books-list" class="book-list"></ul>
-                <button id="books-back-btn" type="button" class="secondary-btn">ホームに戻る</button>
+                <button id="books-back-btn" type="button" class="secondary-btn">ジャンル一覧に戻る</button>
             </section>
 
             <!-- 貸出中一覧画面 -->

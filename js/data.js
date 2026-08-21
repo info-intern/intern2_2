@@ -112,6 +112,21 @@ function findActiveReservation(code, history) {
 }
 
 /**
+ * 蔵書データからジャンル一覧（ジャンル名と冊数）を作成する
+ */
+function getGenreList(books) {
+    const genreCounts = {};
+    books.forEach(function (book) {
+        genreCounts[book.genre] = (genreCounts[book.genre] || 0) + 1;
+    });
+    return Object.keys(genreCounts).sort(function (a, b) {
+        return a.localeCompare(b, 'ja');
+    }).map(function (genre) {
+        return { name: genre, count: genreCounts[genre] };
+    });
+}
+
+/**
  * コードから蔵書データを検索する
  */
 function findBookByCode(code, books) {
