@@ -19,6 +19,28 @@ function showScreen(screenId) {
     screens.forEach(function (screen) {
         screen.hidden = screen.id !== screenId;
     });
+
+    const globalBackBtn = document.getElementById('global-back-btn');
+    globalBackBtn.hidden = screenId === 'screen-home';
+}
+
+/**
+ * 右下固定の戻るボタン押下時、現在の画面に応じた「戻る」操作を行う
+ */
+function handleGlobalBack() {
+    const activeScreen = document.querySelector('.screen:not([hidden])');
+    if (!activeScreen) {
+        return;
+    }
+
+    if (activeScreen.id === 'screen-books') {
+        currentBookGenre = null;
+        renderBooksGenreScreen();
+        showScreen('screen-books-genre');
+        return;
+    }
+
+    goHome();
 }
 
 /**
@@ -857,6 +879,7 @@ async function init() {
     document.getElementById('reserve-date-submit-btn').addEventListener('click', handleReserveDateSubmit);
     document.getElementById('reserve-date-cancel-btn').addEventListener('click', goHome);
     document.getElementById('reserve-complete-home-btn').addEventListener('click', goHome);
+    document.getElementById('global-back-btn').addEventListener('click', handleGlobalBack);
 
     showScreen('screen-home');
 }
