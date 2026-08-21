@@ -115,7 +115,8 @@ function buildConfirmItems(codes) {
                 genre: book.genre,
                 loanDate: getTodayString(),
                 dueDate: addDaysToToday(LOAN_PERIOD_DAYS),
-                hasReservation: isReservedNow(book.code, reservedCodes, reservationHistory)
+                hasReservation: isReservedNow(book.code, reservedCodes, reservationHistory),
+                reservationDueDate: getReservationDueDate(book.code, reservedCodes, reservationHistory)
             });
         } else {
             if (!activeLoan) {
@@ -129,7 +130,8 @@ function buildConfirmItems(codes) {
                 genre: book.genre,
                 loanDate: activeLoan.loanDate,
                 dueDate: activeLoan.dueDate,
-                hasReservation: isReservedNow(book.code, reservedCodes, reservationHistory)
+                hasReservation: isReservedNow(book.code, reservedCodes, reservationHistory),
+                reservationDueDate: getReservationDueDate(book.code, reservedCodes, reservationHistory)
             });
         }
     });
@@ -282,13 +284,17 @@ function renderCompleteScreen() {
     notice.textContent = '';
     if (reservedItems.length > 0) {
         const p = document.createElement('p');
-        p.textContent = '予約が入っている本があります。予約者への連絡をお願いします。';
+        p.textContent = currentMode === '貸出'
+            ? '予約が入っている本があります。期限までに返却してください。'
+            : '予約が入っている本があります。予約者への連絡をお願いします。';
         notice.appendChild(p);
 
         const ul = document.createElement('ul');
         reservedItems.forEach(function (item) {
             const li = document.createElement('li');
-            li.textContent = item.title;
+            li.textContent = (currentMode === '貸出' && item.reservationDueDate)
+                ? item.title + '（' + item.reservationDueDate + 'までに返却）'
+                : item.title;
             ul.appendChild(li);
         });
         notice.appendChild(ul);

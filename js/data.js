@@ -112,10 +112,22 @@ function findActiveLoan(code, history) {
 }
 
 /**
+ * コードに対応する初期データの予約情報（{code, dueDate}）を検索する
+ */
+function findReservationEntry(code, reservations) {
+    for (let i = 0; i < reservations.length; i++) {
+        if (reservations[i].code === code) {
+            return reservations[i];
+        }
+    }
+    return null;
+}
+
+/**
  * 指定コードが予約中かどうかを判定する（初期データの予約一覧を対象）
  */
 function isReserved(code, reservations) {
-    return reservations.indexOf(code) !== -1;
+    return findReservationEntry(code, reservations) !== null;
 }
 
 /**
@@ -123,6 +135,22 @@ function isReserved(code, reservations) {
  */
 function isReservedNow(code, reservations, reservationHistory) {
     return isReserved(code, reservations) || findActiveReservation(code, reservationHistory) !== null;
+}
+
+/**
+ * 指定コードの予約返却期限日を取得する（初期データ＋アプリ内で作成した予約の両方を対象）。
+ * 予約が無い場合はnullを返す。
+ */
+function getReservationDueDate(code, reservations, reservationHistory) {
+    const entry = findReservationEntry(code, reservations);
+    if (entry) {
+        return entry.dueDate;
+    }
+    const activeReservation = findActiveReservation(code, reservationHistory);
+    if (activeReservation) {
+        return activeReservation.reserveDate;
+    }
+    return null;
 }
 
 /**
