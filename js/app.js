@@ -47,10 +47,16 @@ function startMode(mode) {
  * スキャンを開始し、IroatoReaderの読み取り結果を受け取る
  */
 function beginScan() {
+    const displayData = {};
+    allBooks.forEach(function (book) {
+        displayData[book.code] = book.title;
+    });
+
     const readerOptions = {
         analyzeLevel: 5,
         resolution: (typeof IroatoReader !== 'undefined') ? IroatoReader.r1920x1080 : undefined,
         searchCodes: allBooks.map(function (book) { return book.code; }),
+        displayData: displayData,
         labelText: currentMode + 'する本の背表紙を1冊ずつ読み取ってください',
         buttonText: '読み取り完了'
     };
