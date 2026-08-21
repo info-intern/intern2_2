@@ -1,0 +1,254 @@
+:root {
+    --accent-color: #2f7d78;
+    --accent-color-dark: #235f5b;
+    --return-color: #4a6fa5;
+    --return-color-dark: #37527d;
+    --warning-color: #d9622b;
+    --bg-color: #f5f8f7;
+    --card-bg: #ffffff;
+    --text-color: #263238;
+    --sub-text-color: #667077;
+    --border-color: #e0e6e5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    -webkit-text-size-adjust: 100%;
+}
+
+#app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.app-header {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    padding: calc(env(safe-area-inset-top) + 14px) 16px 14px;
+    text-align: center;
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+main {
+    padding: 20px 16px 32px;
+}
+
+.screen[hidden] {
+    display: none;
+}
+
+.lead-text {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 8px 0 4px;
+}
+
+.sub-text {
+    font-size: 14px;
+    color: var(--sub-text-color);
+    margin: 0 0 24px;
+}
+
+/* ボタン共通 */
+button {
+    font-family: inherit;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--accent-color);
+    color: #ffffff;
+    font-weight: 600;
+    margin-top: 12px;
+}
+
+.primary-btn:active {
+    background-color: var(--accent-color-dark);
+}
+
+.secondary-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: transparent;
+    color: var(--sub-text-color);
+    margin-top: 10px;
+}
+
+.secondary-btn:active {
+    color: var(--text-color);
+}
+
+/* ホーム画面 */
+.home-buttons {
+    margin-top: 32px;
+}
+
+.mode-btn {
+    font-size: 20px;
+    padding: 24px;
+}
+
+.mode-btn-return {
+    background-color: var(--return-color);
+}
+
+.mode-btn-return:active {
+    background-color: var(--return-color-dark);
+}
+
+/* スキャン画面 */
+.scan-actions {
+    margin-top: 28px;
+}
+
+/* 確認画面 */
+.confirm-header h2 {
+    font-size: 18px;
+    margin: 8px 0 16px;
+}
+
+.book-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.book-list-plain {
+    margin-bottom: 20px;
+}
+
+.book-item {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.book-item:last-child {
+    border-bottom: none;
+}
+
+.book-item summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.book-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.book-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.reserved-badge {
+    flex-shrink: 0;
+    color: var(--warning-color);
+    font-size: 13px;
+    font-weight: 700;
+    margin-left: 8px;
+    white-space: nowrap;
+}
+
+.chevron {
+    flex-shrink: 0;
+    color: var(--sub-text-color);
+    margin-left: 8px;
+    transition: transform 0.15s ease;
+}
+
+.book-item[open] .chevron {
+    transform: rotate(180deg);
+}
+
+.book-detail {
+    padding: 0 16px 16px 16px;
+    font-size: 14px;
+    color: var(--sub-text-color);
+}
+
+.book-detail-row {
+    display: flex;
+    padding: 4px 0;
+}
+
+.book-detail-label {
+    width: 84px;
+    flex-shrink: 0;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.book-detail-row.is-reserved .book-detail-value {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+/* 確認画面フッター */
+.confirm-footer {
+    margin-top: 16px;
+}
+
+.total-text {
+    text-align: right;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* 完了画面 */
+.notice-box {
+    background-color: #fdf1e9;
+    border: 1px solid var(--warning-color);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--warning-color);
+    margin-bottom: 8px;
+}
+
+.notice-box p {
+    margin: 0 0 6px;
+    font-weight: 700;
+}
+
+.notice-box ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.simple-item {
+    padding: 12px 16px;
+    font-size: 15px;
+}

@@ -2,10 +2,63 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>intern2_2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2f7d78">
+    <title>図書 一括貸出・返却</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Hello World - intern2_2_8/21</h1>
+    <div id="app">
+        <header class="app-header">
+            <h1>図書 一括貸出・返却</h1>
+        </header>
+
+        <main>
+            <!-- ホーム画面 -->
+            <section id="screen-home" class="screen">
+                <p class="lead-text">処理する内容を選んでください</p>
+                <div class="home-buttons">
+                    <button id="home-lend-btn" type="button" class="primary-btn mode-btn">貸出</button>
+                    <button id="home-return-btn" type="button" class="primary-btn mode-btn mode-btn-return">返却</button>
+                </div>
+            </section>
+
+            <!-- スキャン画面 -->
+            <section id="screen-scan" class="screen" hidden>
+                <p id="scan-label" class="lead-text"></p>
+                <p class="sub-text">本の背表紙のカメレオンコードを、まとめて連続で読み取れます。</p>
+                <div class="scan-actions">
+                    <button id="scan-start-btn" type="button" class="primary-btn">スキャンを開始する</button>
+                    <button id="scan-cancel-btn" type="button" class="secondary-btn">ホームに戻る</button>
+                </div>
+            </section>
+
+            <!-- 確認画面 -->
+            <section id="screen-confirm" class="screen" hidden>
+                <div class="confirm-header">
+                    <h2 id="confirm-title"></h2>
+                </div>
+                <ul id="confirm-list" class="book-list"></ul>
+                <div class="confirm-footer">
+                    <p id="confirm-total" class="total-text"></p>
+                    <button id="confirm-submit-btn" type="button" class="primary-btn"></button>
+                    <button id="confirm-cancel-btn" type="button" class="secondary-btn">キャンセルしてホームに戻る</button>
+                </div>
+            </section>
+
+            <!-- 完了画面 -->
+            <section id="screen-complete" class="screen" hidden>
+                <p id="complete-message" class="lead-text"></p>
+                <ul id="complete-list" class="book-list book-list-plain"></ul>
+                <div id="complete-notice" class="notice-box" hidden></div>
+                <button id="complete-home-btn" type="button" class="primary-btn">ホームに戻る</button>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/reader.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
