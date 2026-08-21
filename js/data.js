@@ -6,6 +6,8 @@ const LOAN_HISTORY_KEY = 'loanHistory';
 const LOAN_PERIOD_DAYS = 14;
 const LOAN_STATUS_ACTIVE = '貸出中';
 const LOAN_STATUS_RETURNED = '返却済み';
+const RESERVATION_HISTORY_KEY = 'reservationHistory';
+const RESERVATION_STATUS_ACTIVE = '予約中';
 
 /**
  * 蔵書データ(books.json)を取得する
@@ -52,6 +54,40 @@ function saveLoanHistory(history) {
 }
 
 /**
+ * LocalStorageから予約履歴を取得する
+ */
+function getReservationHistory() {
+    const raw = localStorage.getItem(RESERVATION_HISTORY_KEY);
+    if (!raw) {
+        return [];
+    }
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        return [];
+    }
+}
+
+/**
+ * 予約履歴をLocalStorageへ保存する
+ */
+function saveReservationHistory(history) {
+    localStorage.setItem(RESERVATION_HISTORY_KEY, JSON.stringify(history));
+}
+
+/**
+ * コードに対応する「予約中」の履歴レコードを検索する
+ */
+function findActiveReservation(code, history) {
+    for (let i = 0; i < history.length; i++) {
+        if (history[i].code === code && history[i].status === RESERVATION_STATUS_ACTIVE) {
+            return history[i];
+        }
+    }
+    return null;
+}
+
+/**
  * コードから蔵書データを検索する
  */
 function findBookByCode(code, books) {
@@ -76,10 +112,17 @@ function findActiveLoan(code, history) {
 }
 
 /**
- * 指定コードが予約中かどうかを判定する
+ * 指定コードが予約中かどうかを判定する（初期データの予約一覧を対象）
  */
 function isReserved(code, reservations) {
     return reservations.indexOf(code) !== -1;
+}
+
+/**
+ * 指定コードが予約中かどうかを判定する（初期データ＋アプリ内で作成した予約の両方を対象）
+ */
+function isReservedNow(code, reservations, reservationHistory) {
+    return isReserved(code, reservations) || findActiveReservation(code, reservationHistory) !== null;
 }
 
 /**
@@ -106,4 +149,22 @@ function addDaysToToday(days) {
  */
 function getTodayString() {
     return formatDate(new Date());
+}
+
+/**
+ * 今日の日付を yyyy-MM-dd 形式（input[type=date]用）で返す
+ */
+function getTodayIsoString() {
+    const date = new Date();
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + d;
+}
+
+/**
+ * yyyy-MM-dd 形式の日付文字列を yyyy/MM/dd 形式に変換する
+ */
+function formatIsoDate(isoDate) {
+    return isoDate.split('-').join('/');
 }

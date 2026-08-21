@@ -3,8 +3,11 @@
 let allBooks = [];
 let reservedCodes = [];
 let loanHistory = [];
+let reservationHistory = [];
 let currentMode = null; // '貸出' または '返却'
 let confirmItems = [];  // 確認画面に表示する本のリスト
+let reserveSelectedCodes = []; // 予約フローで選択中の本のコード一覧
+let reserveItems = [];         // 予約を確定する本のリスト（タイトル込み）
 
 /**
  * 画面ID(screen-xxx)を1つだけ表示し、他は隠す
@@ -22,6 +25,8 @@ function showScreen(screenId) {
 function goHome() {
     currentMode = null;
     confirmItems = [];
+    reserveSelectedCodes = [];
+    reserveItems = [];
     showScreen('screen-home');
 }
 
@@ -110,7 +115,7 @@ function buildConfirmItems(codes) {
                 genre: book.genre,
                 loanDate: getTodayString(),
                 dueDate: addDaysToToday(LOAN_PERIOD_DAYS),
-                hasReservation: isReserved(book.code, reservedCodes)
+                hasReservation: isReservedNow(book.code, reservedCodes, reservationHistory)
             });
         } else {
             if (!activeLoan) {
@@ -124,7 +129,7 @@ function buildConfirmItems(codes) {
                 genre: book.genre,
                 loanDate: activeLoan.loanDate,
                 dueDate: activeLoan.dueDate,
-                hasReservation: isReserved(book.code, reservedCodes)
+                hasReservation: isReservedNow(book.code, reservedCodes, reservationHistory)
             });
         }
     });
@@ -330,6 +335,13 @@ function createBookInfoRow(book) {
         summary.appendChild(badge);
     }
 
+    if (isReservedNow(book.code, reservedCodes, reservationHistory)) {
+        const badge = document.createElement('span');
+        badge.className = 'reserved-badge';
+        badge.textContent = '⚠ 予約あり';
+        summary.appendChild(badge);
+    }
+
     const chevron = document.createElement('span');
     chevron.className = 'chevron';
     chevron.textContent = '﹀';
@@ -426,6 +438,186 @@ function createLoanInfoRow(loan, book) {
 }
 
 /**
+ * 「予約」ボタン押下時、予約フローの状態を初期化して本の選択画面へ遷移する
+ */
+function startReserve() {
+    reserveSelectedCodes = [];
+    reserveItems = [];
+    renderReserveSelectScreen();
+    showScreen('screen-reserve-select');
+}
+
+/**
+ * 予約する本の選択画面の一覧を描画する
+ */
+function renderReserveSelectScreen() {
+    const title = document.getElementById('reserve-select-title');
+    title.textContent = '予約する本を選択 (' + allBooks.length + '冊)';
+
+    const list = document.getElementById('reserve-select-list');
+    list.textContent = '';
+    allBooks.forEach(function (book) {
+        list.appendChild(createReserveSelectRow(book));
+    });
+
+    updateReserveSelectFooter();
+}
+
+/**
+ * 本の選択画面の1行分（チェックボックス付き）のDOM要素を作成する
+ */
+function createReserveSelectRow(book) {
+    const activeLoan = findActiveLoan(book.code, loanHistory);
+    const alreadyReserved = isReservedNow(book.code, reservedCodes, reservationHistory);
+
+    const row = document.createElement('label');
+    row.className = 'book-item reserve-select-row' + (alreadyReserved ? ' is-disabled' : '');
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'reserve-checkbox';
+    checkbox.disabled = alreadyReserved;
+    checkbox.checked = reserveSelectedCodes.indexOf(book.code) !== -1;
+    checkbox.addEventListener('change', function () {
+        toggleReserveSelection(book.code, checkbox.checked);
+    });
+    row.appendChild(checkbox);
+
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'book-title';
+    titleSpan.textContent = book.title;
+    row.appendChild(titleSpan);
+
+    if (activeLoan) {
+        const badge = document.createElement('span');
+        badge.className = 'status-badge';
+        badge.textContent = '貸出中';
+        row.appendChild(badge);
+    }
+
+    if (alreadyReserved) {
+        const badge = document.createElement('span');
+        badge.className = 'reserved-badge';
+        badge.textContent = '⚠ 予約済み';
+        row.appendChild(badge);
+    }
+
+    return row;
+}
+
+/**
+ * 本の選択画面でのチェック状態変更を選択リストへ反映する
+ */
+function toggleReserveSelection(code, checked) {
+    const index = reserveSelectedCodes.indexOf(code);
+    if (checked && index === -1) {
+        reserveSelectedCodes.push(code);
+    } else if (!checked && index !== -1) {
+        reserveSelectedCodes.splice(index, 1);
+    }
+    updateReserveSelectFooter();
+}
+
+/**
+ * 本の選択画面フッターの選択数表示と「次へ」ボタンの活性状態を更新する
+ */
+function updateReserveSelectFooter() {
+    const total = document.getElementById('reserve-select-total');
+    total.textContent = '選択中 ' + reserveSelectedCodes.length + ' 冊';
+
+    const nextBtn = document.getElementById('reserve-select-next-btn');
+    nextBtn.disabled = reserveSelectedCodes.length === 0;
+}
+
+/**
+ * 本の選択画面の「次へ」ボタン押下時、選択内容を確定して予約日指定画面へ遷移する
+ */
+function handleReserveSelectNext() {
+    if (reserveSelectedCodes.length === 0) {
+        return;
+    }
+
+    reserveItems = reserveSelectedCodes.map(function (code) {
+        const book = findBookByCode(code, allBooks);
+        return { code: code, title: book ? book.title : '未登録の本 (コード: ' + code + ')' };
+    });
+
+    renderReserveDateScreen();
+    showScreen('screen-reserve-date');
+}
+
+/**
+ * 予約日指定画面の選択本一覧を描画し、日付欄を初期化する
+ */
+function renderReserveDateScreen() {
+    const title = document.getElementById('reserve-date-title');
+    title.textContent = '予約日を指定 (' + reserveItems.length + '冊)';
+
+    const list = document.getElementById('reserve-date-list');
+    list.textContent = '';
+    reserveItems.forEach(function (item) {
+        const li = document.createElement('li');
+        li.className = 'simple-item';
+        li.textContent = item.title;
+        list.appendChild(li);
+    });
+
+    const dateInput = document.getElementById('reserve-date-input');
+    dateInput.min = getTodayIsoString();
+    dateInput.value = '';
+}
+
+/**
+ * 予約日指定画面の確定ボタン押下時、入力値を確認して予約を登録する
+ */
+function handleReserveDateSubmit() {
+    const dateInput = document.getElementById('reserve-date-input');
+    const isoDate = dateInput.value;
+
+    if (!isoDate) {
+        window.alert('予約期限日を選択してください。');
+        return;
+    }
+    if (isoDate < getTodayIsoString()) {
+        window.alert('予約期限日は本日以降の日付を選択してください。');
+        return;
+    }
+
+    const reserveDate = formatIsoDate(isoDate);
+    const createdDate = getTodayString();
+
+    reserveItems.forEach(function (item) {
+        reservationHistory.push({
+            code: item.code,
+            reserveDate: reserveDate,
+            createdDate: createdDate,
+            status: RESERVATION_STATUS_ACTIVE
+        });
+    });
+
+    saveReservationHistory(reservationHistory);
+    renderReserveCompleteScreen(reserveDate);
+    showScreen('screen-reserve-complete');
+}
+
+/**
+ * 予約完了画面のメッセージと予約した本の一覧を描画する
+ */
+function renderReserveCompleteScreen(reserveDate) {
+    const message = document.getElementById('reserve-complete-message');
+    message.textContent = '予約が完了しました（' + reserveItems.length + '冊 / 期限: ' + reserveDate + '）';
+
+    const list = document.getElementById('reserve-complete-list');
+    list.textContent = '';
+    reserveItems.forEach(function (item) {
+        const li = document.createElement('li');
+        li.className = 'simple-item';
+        li.textContent = item.title;
+        list.appendChild(li);
+    });
+}
+
+/**
  * 起動時の初期化処理。データの読み込みとイベント登録を行う
  */
 async function init() {
@@ -437,6 +629,7 @@ async function init() {
         return;
     }
     loanHistory = getLoanHistory();
+    reservationHistory = getReservationHistory();
 
     document.getElementById('home-lend-btn').addEventListener('click', function () {
         startMode('貸出');
@@ -444,6 +637,7 @@ async function init() {
     document.getElementById('home-return-btn').addEventListener('click', function () {
         startMode('返却');
     });
+    document.getElementById('home-reserve-btn').addEventListener('click', startReserve);
     document.getElementById('scan-start-btn').addEventListener('click', beginScan);
     document.getElementById('scan-cancel-btn').addEventListener('click', goHome);
     document.getElementById('confirm-submit-btn').addEventListener('click', handleConfirmSubmit);
@@ -459,6 +653,11 @@ async function init() {
     });
     document.getElementById('books-back-btn').addEventListener('click', goHome);
     document.getElementById('loans-back-btn').addEventListener('click', goHome);
+    document.getElementById('reserve-select-next-btn').addEventListener('click', handleReserveSelectNext);
+    document.getElementById('reserve-select-cancel-btn').addEventListener('click', goHome);
+    document.getElementById('reserve-date-submit-btn').addEventListener('click', handleReserveDateSubmit);
+    document.getElementById('reserve-date-cancel-btn').addEventListener('click', goHome);
+    document.getElementById('reserve-complete-home-btn').addEventListener('click', goHome);
 
     showScreen('screen-home');
 }

@@ -21,6 +21,7 @@
                 <div class="home-buttons">
                     <button id="home-lend-btn" type="button" class="primary-btn mode-btn">貸出</button>
                     <button id="home-return-btn" type="button" class="primary-btn mode-btn mode-btn-return">返却</button>
+                    <button id="home-reserve-btn" type="button" class="primary-btn mode-btn mode-btn-reserve">予約</button>
                 </div>
                 <div class="home-secondary-buttons">
                     <button id="home-books-btn" type="button" class="list-btn">蔵書一覧を見る</button>
@@ -76,6 +77,41 @@
                 <ul id="loans-list" class="book-list"></ul>
                 <p id="loans-empty" class="sub-text" hidden>現在貸出中の本はありません。</p>
                 <button id="loans-back-btn" type="button" class="secondary-btn">ホームに戻る</button>
+            </section>
+
+            <!-- 予約: 本の選択画面 -->
+            <section id="screen-reserve-select" class="screen" hidden>
+                <div class="confirm-header">
+                    <h2 id="reserve-select-title"></h2>
+                </div>
+                <p class="sub-text">予約したい本にチェックを付けてください。</p>
+                <ul id="reserve-select-list" class="book-list"></ul>
+                <div class="confirm-footer">
+                    <p id="reserve-select-total" class="total-text"></p>
+                    <button id="reserve-select-next-btn" type="button" class="primary-btn">次へ（予約日を指定）</button>
+                    <button id="reserve-select-cancel-btn" type="button" class="secondary-btn">キャンセルしてホームに戻る</button>
+                </div>
+            </section>
+
+            <!-- 予約: 予約日指定画面 -->
+            <section id="screen-reserve-date" class="screen" hidden>
+                <div class="confirm-header">
+                    <h2 id="reserve-date-title"></h2>
+                </div>
+                <ul id="reserve-date-list" class="book-list book-list-plain"></ul>
+                <div class="date-field">
+                    <label for="reserve-date-input">予約期限日</label>
+                    <input id="reserve-date-input" type="date">
+                </div>
+                <button id="reserve-date-submit-btn" type="button" class="primary-btn">予約を確定する</button>
+                <button id="reserve-date-cancel-btn" type="button" class="secondary-btn">キャンセルしてホームに戻る</button>
+            </section>
+
+            <!-- 予約: 完了画面 -->
+            <section id="screen-reserve-complete" class="screen" hidden>
+                <p id="reserve-complete-message" class="lead-text"></p>
+                <ul id="reserve-complete-list" class="book-list book-list-plain"></ul>
+                <button id="reserve-complete-home-btn" type="button" class="primary-btn">ホームに戻る</button>
             </section>
         </main>
     </div>

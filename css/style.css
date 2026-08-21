@@ -3,6 +3,8 @@
     --accent-color-dark: #235f5b;
     --return-color: #4a6fa5;
     --return-color-dark: #37527d;
+    --reserve-color: #8a6dbd;
+    --reserve-color-dark: #6b5093;
     --warning-color: #d9622b;
     --bg-color: #f5f8f7;
     --card-bg: #ffffff;
@@ -115,6 +117,14 @@ button {
 
 .mode-btn-return:active {
     background-color: var(--return-color-dark);
+}
+
+.mode-btn-reserve {
+    background-color: var(--reserve-color);
+}
+
+.mode-btn-reserve:active {
+    background-color: var(--reserve-color-dark);
 }
 
 .home-secondary-buttons {
@@ -246,6 +256,57 @@ button {
 .book-detail-row.is-reserved .book-detail-value {
     color: var(--warning-color);
     font-weight: 600;
+}
+
+/* 予約: 本の選択画面 */
+.reserve-select-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.reserve-checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+}
+
+.reserve-select-row.is-disabled {
+    color: var(--sub-text-color);
+    cursor: not-allowed;
+}
+
+.primary-btn:disabled {
+    background-color: var(--border-color);
+    color: var(--sub-text-color);
+    cursor: not-allowed;
+}
+
+/* 予約: 予約日指定画面 */
+.date-field {
+    margin-top: 16px;
+}
+
+.date-field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.date-field input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
 }
 
 /* 確認画面フッター */
